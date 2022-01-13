@@ -8,3 +8,4 @@
 * [*WorkQueues*](https://www.rabbitmq.com/tutorials/tutorial-two-java.html) - Распределение сообщений между потребителями
 * [*PublishSubscribe*](https://www.rabbitmq.com/tutorials/tutorial-three-java.html) - Сообщения доставляются всем потребителями
 * [*Routing*](https://www.rabbitmq.com/tutorials/tutorial-four-java.html) - Сообщения доставляются потребителями в соответствии с их подписками
+* [*Topics*](https://www.rabbitmq.com/tutorials/tutorial-five-java.html) - Сообщения доставляются потребителями в соответствии с их подписками по шаблонам
