@@ -9,4 +9,5 @@
 * [*PublishSubscribe*](https://www.rabbitmq.com/tutorials/tutorial-three-java.html) - Сообщения доставляются всем потребителями
 * [*Routing*](https://www.rabbitmq.com/tutorials/tutorial-four-java.html) - Сообщения доставляются потребителями в соответствии с их подписками
 * [*Topics*](https://www.rabbitmq.com/tutorials/tutorial-five-java.html) - Сообщения доставляются потребителями в соответствии с их подписками по шаблонам
-* [*RPC*](https://www.rabbitmq.com/tutorials/tutorial-six-java.html) - Реализация шаблона Request/Reply
+* [*RPC*](https://www.rabbitmq.com/tutorials/tutorial-six-java.html) - Реализация шаблона Request/Reply "руками"
+* [*RPC*](https://www.rabbitmq.com/tutorials/tutorial-six-java.html) - Реализация шаблона Request/Reply с помощью стандартного класса [RpcClient](https://rabbitmq.github.io/rabbitmq-java-client/api/current/com/rabbitmq/client/RpcClient.html)
