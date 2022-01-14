@@ -1,17 +1,17 @@
 package ru.example.rmq.routing
 
 import com.rabbitmq.client._
+import scala.util.Using
 
 object Producer {
   def main(args: Array[String]): Unit = {
     val EXCHANGE_NAME = "direct_logs"
+    val factory       = new ConnectionFactory
+    factory.setHost("localhost")
 
-    try {
-      val factory = new ConnectionFactory
-      factory.setHost("localhost")
-
-      val connection = factory.newConnection
-      val channel    = connection.createChannel
+    Using.Manager { use =>
+      val connection = use(factory.newConnection)
+      val channel    = use(connection.createChannel)
       channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.DIRECT)
 
       val severity = getSeverity(args)
@@ -19,10 +19,6 @@ object Producer {
 
       channel.basicPublish(EXCHANGE_NAME, severity, null, message.getBytes("UTF-8"))
       println(s"[x] Sent '$severity': '$message'")
-    } catch {
-      case e: Exception =>
-        println(e.getLocalizedMessage)
-        sys.exit(-1)
     }
     sys.exit(0)
   }
@@ -40,8 +36,7 @@ object Producer {
   def joinStrings(strings: Array[String], delimiter: String, startIndex: Int): String = {
     val length = strings.length
 
-    if (length == 0) ""
-    else if (length <= startIndex) ""
+    if (length == 0 || length <= startIndex) ""
     else strings.splitAt(1)._2.mkString(delimiter)
   }
 }

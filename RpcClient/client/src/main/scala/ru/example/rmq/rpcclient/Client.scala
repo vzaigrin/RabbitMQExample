@@ -1,16 +1,17 @@
 package ru.example.rmq.rpcclient
 
 import com.rabbitmq.client._
+import scala.util.Using
 
 object Client {
   def main(args: Array[String]): Unit = {
     val requestQueueName = "rpc_queue"
+    val factory          = new ConnectionFactory
+    factory.setHost("localhost")
 
-    try {
-      val factory = new ConnectionFactory
-      factory.setHost("localhost")
-      val connection = factory.newConnection
-      val channel    = connection.createChannel
+    Using.Manager { use =>
+      val connection = use(factory.newConnection)
+      val channel    = use(connection.createChannel)
 
       val rpcClientParams = new RpcClientParams()
         .channel(channel)
@@ -24,10 +25,6 @@ object Client {
         val response = rpc.stringCall(i_str)
         println(s"[.] Got '$response'")
       }
-    } catch {
-      case e: Exception =>
-        println(e.getLocalizedMessage)
-        sys.exit(-1)
     }
     sys.exit(0)
   }

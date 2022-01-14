@@ -1,17 +1,18 @@
 package ru.example.rmq.workqueues
 
-import com.rabbitmq.client.{ConnectionFactory, MessageProperties}
+import com.rabbitmq.client._
+import scala.util.Using
 
 object Producer {
   def main(args: Array[String]): Unit = {
     val TASK_QUEUE_NAME = "task_queue"
     val message         = args.mkString(" ")
+    val factory         = new ConnectionFactory
+    factory.setHost("localhost")
 
-    try {
-      val factory = new ConnectionFactory
-      factory.setHost("localhost")
-      val connection = factory.newConnection
-      val channel    = connection.createChannel
+    Using.Manager { use =>
+      val connection = use(factory.newConnection)
+      val channel    = use(connection.createChannel)
 
       channel.queueDeclare(TASK_QUEUE_NAME, true, false, false, null)
       channel.basicPublish(
@@ -21,10 +22,6 @@ object Producer {
         message.getBytes("UTF-8")
       )
       println(s"[x] Sent '$message'")
-    } catch {
-      case e: Exception =>
-        println(e.getLocalizedMessage)
-        sys.exit(-1)
     }
     sys.exit(0)
   }
