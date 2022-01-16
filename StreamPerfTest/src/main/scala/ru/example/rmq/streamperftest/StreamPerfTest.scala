@@ -6,7 +6,7 @@ import java.time.Duration
 object StreamPerfTest {
   def main(args: Array[String]): Unit = {
     if (args.length != 4) {
-      println("Usage: Producer uri stream messageCount batchSize")
+      println("Usage: StreamPergTest uri stream messageCount batchSize")
       println("\turi = rabbitmq-stream://guest:guest@localhost:5552")
       sys.exit(-1)
     }
