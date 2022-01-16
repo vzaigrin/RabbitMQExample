@@ -13,3 +13,4 @@
 * [*RPC*](https://www.rabbitmq.com/tutorials/tutorial-six-java.html) - Реализация шаблона Request/Reply с помощью стандартного класса [RpcClient](https://rabbitmq.github.io/rabbitmq-java-client/api/current/com/rabbitmq/client/RpcClient.html)
 * [*Publisher Confirms*](https://www.rabbitmq.com/tutorials/tutorial-seven-java.html) - Отправка сообщений с подтверждениями
 * *RabbitMQ Stream Test* - Простое приложение для RabbitMQ Stream
+* *RabbitMQ Stream Performance Test* - Простое приложение для тестирования производительности RabbitMQ Stream
