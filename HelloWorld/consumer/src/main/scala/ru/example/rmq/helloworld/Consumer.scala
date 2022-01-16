@@ -12,20 +12,17 @@ object Consumer {
     val connection = factory.newConnection
     val channel    = connection.createChannel
 
-    class deliverCallback extends DeliverCallback {
-      override def handle(s: String, delivery: Delivery): Unit = {
-        val message = new String(delivery.getBody, StandardCharsets.UTF_8)
-        println(s"[x] Received '$message'")
-      }
-    }
-
-    class consumerShutdownSignalCallback extends ConsumerShutdownSignalCallback {
-      override def handleShutdownSignal(s: String, e: ShutdownSignalException): Unit = {}
-    }
-
     channel.queueDeclare(QUEUE_NAME, false, false, false, null)
     println("[*] Waiting for messages. To exit press CTRL+C")
 
-    channel.basicConsume(QUEUE_NAME, true, new deliverCallback, new consumerShutdownSignalCallback)
+    channel.basicConsume(
+      QUEUE_NAME,
+      true,
+      (_: String, delivery: Delivery) => {
+        val message = new String(delivery.getBody, StandardCharsets.UTF_8)
+        println(s"[x] Received '$message'")
+      },
+      (_: String, _: ShutdownSignalException) => {}
+    )
   }
 }

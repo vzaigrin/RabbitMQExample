@@ -46,27 +46,19 @@ object Client {
 
     channel.basicPublish("", requestQueueName, props, message.getBytes("UTF-8"))
 
-    class deliverCallback extends DeliverCallback {
-      override def handle(s: String, delivery: Delivery): Unit = {
+    val cTag = channel.basicConsume(
+      replyQueueName,
+      true,
+      (_: String, delivery: Delivery) => {
         if (delivery.getProperties.getCorrelationId.equals(corrId)) {
           response.offer(new String(delivery.getBody, "UTF-8"))
         }
-      }
-    }
-
-    class consumerShutdownSignalCallback extends ConsumerShutdownSignalCallback {
-      override def handleShutdownSignal(s: String, e: ShutdownSignalException): Unit = {}
-    }
-
-    val ctag = channel.basicConsume(
-      replyQueueName,
-      true,
-      new deliverCallback,
-      new consumerShutdownSignalCallback
+      },
+      (_: String, _: ShutdownSignalException) => {}
     )
 
     val result = response.take()
-    channel.basicCancel(ctag)
+    channel.basicCancel(cTag)
     result
   }
 }

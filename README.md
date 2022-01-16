@@ -10,7 +10,7 @@
 * [*Routing*](https://www.rabbitmq.com/tutorials/tutorial-four-java.html) - Сообщения доставляются потребителями в соответствии с их подписками
 * [*Topics*](https://www.rabbitmq.com/tutorials/tutorial-five-java.html) - Сообщения доставляются потребителями в соответствии с их подписками по шаблонам
 * [*RPC*](https://www.rabbitmq.com/tutorials/tutorial-six-java.html) - Реализация шаблона Request/Reply "руками"
-* [*RPC*](https://www.rabbitmq.com/tutorials/tutorial-six-java.html) - Реализация шаблона Request/Reply с помощью стандартного класса [RpcClient](https://rabbitmq.github.io/rabbitmq-java-client/api/current/com/rabbitmq/client/RpcClient.html)
+* [*RPCClient*](https://www.rabbitmq.com/tutorials/tutorial-six-java.html) - Реализация шаблона Request/Reply с помощью стандартного класса [RpcClient](https://rabbitmq.github.io/rabbitmq-java-client/api/current/com/rabbitmq/client/RpcClient.html)
 * [*Publisher Confirms*](https://www.rabbitmq.com/tutorials/tutorial-seven-java.html) - Отправка сообщений с подтверждениями
 * *RabbitMQ Stream Test* - Простое приложение для RabbitMQ Stream
 * *RabbitMQ Stream Performance Test* - Простое приложение для тестирования производительности RabbitMQ Stream

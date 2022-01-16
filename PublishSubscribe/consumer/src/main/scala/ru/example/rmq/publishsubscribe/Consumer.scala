@@ -15,18 +15,15 @@ object Consumer {
     val queueName = channel.queueDeclare().getQueue
     channel.queueBind(queueName, EXCHANGE_NAME, "")
 
-    class deliverCallback extends DeliverCallback {
-      override def handle(s: String, delivery: Delivery): Unit = {
+    println("[*] Waiting for messages. To exit press CTRL+C")
+    channel.basicConsume(
+      queueName,
+      true,
+      (_: String, delivery: Delivery) => {
         val message = new String(delivery.getBody, "UTF-8")
         println(s"[x] Received '$message'")
-      }
-    }
-
-    class consumerShutdownSignalCallback extends ConsumerShutdownSignalCallback {
-      override def handleShutdownSignal(s: String, e: ShutdownSignalException): Unit = {}
-    }
-
-    println("[*] Waiting for messages. To exit press CTRL+C")
-    channel.basicConsume(queueName, true, new deliverCallback, new consumerShutdownSignalCallback)
+      },
+      (_: String, _: ShutdownSignalException) => {}
+    )
   }
 }

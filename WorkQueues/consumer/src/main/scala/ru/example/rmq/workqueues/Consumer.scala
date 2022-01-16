@@ -12,22 +12,6 @@ object Consumer {
     val connection = factory.newConnection
     val channel    = connection.createChannel
 
-    class deliverCallback extends DeliverCallback {
-      override def handle(s: String, delivery: Delivery): Unit = {
-        val message = new String(delivery.getBody, StandardCharsets.UTF_8)
-        print(s"[x] Received '$message'")
-        try doWork(message)
-        finally {
-          System.out.println(" Done")
-          channel.basicAck(delivery.getEnvelope.getDeliveryTag, false)
-        }
-      }
-    }
-
-    class consumerShutdownSignalCallback extends ConsumerShutdownSignalCallback {
-      override def handleShutdownSignal(s: String, e: ShutdownSignalException): Unit = {}
-    }
-
     channel.basicQos(1)
     channel.queueDeclare(TASK_QUEUE_NAME, true, false, false, null)
     println("[*] Waiting for messages. To exit press CTRL+C")
@@ -35,8 +19,16 @@ object Consumer {
     channel.basicConsume(
       TASK_QUEUE_NAME,
       false,
-      new deliverCallback,
-      new consumerShutdownSignalCallback
+      (_: String, delivery: Delivery) => {
+        val message = new String(delivery.getBody, StandardCharsets.UTF_8)
+        print(s"[x] Received '$message'")
+        try doWork(message)
+        finally {
+          System.out.println(" Done")
+          channel.basicAck(delivery.getEnvelope.getDeliveryTag, false)
+        }
+      },
+      (_: String, _: ShutdownSignalException) => {}
     )
   }
 

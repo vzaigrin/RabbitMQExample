@@ -17,8 +17,11 @@ object Server {
     channel.queuePurge(RPC_QUEUE_NAME)
     channel.basicQos(1)
 
-    class deliverCallback extends DeliverCallback {
-      override def handle(s: String, delivery: Delivery): Unit = {
+    println("[x] Awaiting RPC requests")
+    channel.basicConsume(
+      RPC_QUEUE_NAME,
+      false,
+      (_: String, delivery: Delivery) => {
         val replyProps = new AMQP.BasicProperties.Builder()
           .correlationId(delivery.getProperties.getCorrelationId)
           .build()
@@ -41,19 +44,8 @@ object Server {
         } finally {
           channel.basicAck(delivery.getEnvelope.getDeliveryTag, false)
         }
-      }
-    }
-
-    class consumerShutdownSignalCallback extends ConsumerShutdownSignalCallback {
-      override def handleShutdownSignal(s: String, e: ShutdownSignalException): Unit = {}
-    }
-
-    println("[x] Awaiting RPC requests")
-    channel.basicConsume(
-      RPC_QUEUE_NAME,
-      false,
-      new deliverCallback,
-      new consumerShutdownSignalCallback
+      },
+      (_: String, _: ShutdownSignalException) => {}
     )
   }
 }

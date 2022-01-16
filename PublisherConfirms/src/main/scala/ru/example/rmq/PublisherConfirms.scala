@@ -68,7 +68,6 @@ object PublisherConfirms {
   def handlePublishConfirmsAsynchronously(ch: Channel): Unit = {
     val queue = UUID.randomUUID.toString
     ch.queueDeclare(queue, false, false, true, null)
-
     val outstandingConfirms = new ConcurrentSkipListMap[Long, String]
 
     class CleanOutstandingConfirms extends ConfirmCallback {
@@ -81,18 +80,16 @@ object PublisherConfirms {
     }
     val cleanOutstandingConfirms = new CleanOutstandingConfirms()
 
-    class NackCallback extends ConfirmCallback {
-      override def handle(sequenceNumber: Long, multiple: Boolean): Unit = {
+    ch.addConfirmListener(
+      cleanOutstandingConfirms,
+      (sequenceNumber: Long, multiple: Boolean) => {
         val body = outstandingConfirms.get(sequenceNumber)
         System.err.println(
           s"Message with body $body has been nack-ed. Sequence number: $sequenceNumber, multiple: $multiple"
         )
         cleanOutstandingConfirms.handle(sequenceNumber, multiple)
       }
-    }
-    val nackCallback = new NackCallback()
-
-    ch.addConfirmListener(cleanOutstandingConfirms, nackCallback)
+    )
     val start = System.nanoTime
 
     (0 until MESSAGE_COUNT).foreach { i =>
