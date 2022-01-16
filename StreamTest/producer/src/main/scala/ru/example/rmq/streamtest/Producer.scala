@@ -6,10 +6,8 @@ import io.circe.Encoder
 import io.circe.generic.semiauto.deriveEncoder
 import io.circe.syntax.EncoderOps
 import org.apache.commons.csv.CSVFormat
-
 import java.io.FileReader
 import java.nio.charset.StandardCharsets
-import java.time.Duration
 
 object Producer {
   def main(args: Array[String]): Unit = {
@@ -36,8 +34,8 @@ object Producer {
     // Создаём Producer
     val producer = environment
       .producerBuilder()
+      .name("Test")
       .stream(stream)
-      .batchSize(1)
       .build()
 
     // Преобразовываем записи в JSON и отправляем в RabbitMQ
@@ -56,6 +54,9 @@ object Producer {
     } finally {
       records.close()
     }
+
+    // Пауза для отправки не полного пакета
+    Thread.sleep(100)
 
     // Закрываем и выходим
     producer.close()
