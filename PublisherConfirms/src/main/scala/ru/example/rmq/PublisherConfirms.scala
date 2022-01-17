@@ -70,15 +70,12 @@ object PublisherConfirms {
     ch.queueDeclare(queue, false, false, true, null)
     val outstandingConfirms = new ConcurrentSkipListMap[Long, String]
 
-    class CleanOutstandingConfirms extends ConfirmCallback {
-      override def handle(sequenceNumber: Long, multiple: Boolean): Unit = {
-        if (multiple) {
-          val confirmed = outstandingConfirms.headMap(sequenceNumber, true)
-          confirmed.clear()
-        } else outstandingConfirms.remove(sequenceNumber)
-      }
+    val cleanOutstandingConfirms: ConfirmCallback = (sequenceNumber: Long, multiple: Boolean) => {
+      if (multiple) {
+        val confirmed = outstandingConfirms.headMap(sequenceNumber, true)
+        confirmed.clear()
+      } else outstandingConfirms.remove(sequenceNumber)
     }
-    val cleanOutstandingConfirms = new CleanOutstandingConfirms()
 
     ch.addConfirmListener(
       cleanOutstandingConfirms,
