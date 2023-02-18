@@ -13,7 +13,7 @@ object StreamPerfTest {
 
     val uri          = args(0)
     val stream       = args(1)
-    val messageCount = args(2).toInt
+    val messageCount = args(2).toLong
     val messageSize  = args(3).toInt
     val batchSize    = args(4).toInt
 
@@ -32,25 +32,25 @@ object StreamPerfTest {
       .batchSize(batchSize)
       .build()
 
-    // Получаем номер последней записи в stream
-    val firstPublishingId = producer.getLastPublishingId
+    // Создаём сообщение, которое будем отправлять
+    val value = Array.fill[Byte](messageSize)(0)
 
     // Отправляем в RabbitMQ
     val start = System.nanoTime
-
-    (0 until messageCount) foreach { _ =>
+    (0L until messageCount) foreach { _ =>
       producer.send(
         producer
           .messageBuilder()
-          .addData(Array.fill[Byte](messageSize)(0))
+          .addData(value)
           .build(),
         _ => {}
       )
     }
-
     val end = System.nanoTime
+
+    // Выводим результат
     println(
-      s"Published ${producer.getLastPublishingId - firstPublishingId} messages with size $messageSize by batch $batchSize in ${Duration.ofNanos(end - start).toMillis} ms"
+      s"Published $messageCount messages with size $messageSize by batch $batchSize in ${Duration.ofNanos(end - start).toMillis} ms"
     )
 
     // Закрываем и выходим
