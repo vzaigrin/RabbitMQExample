@@ -5,8 +5,8 @@ import java.time.Duration
 
 object StreamPerfTest {
   def main(args: Array[String]): Unit = {
-    if (args.length != 4) {
-      println("Usage: StreamPergTest uri stream messageCount batchSize")
+    if (args.length != 5) {
+      println("Usage: StreamPergTest uri stream messageCount messageSize batchSize")
       println("\turi = rabbitmq-stream://guest:guest@localhost:5552")
       sys.exit(-1)
     }
@@ -14,7 +14,8 @@ object StreamPerfTest {
     val uri          = args(0)
     val stream       = args(1)
     val messageCount = args(2).toInt
-    val batchSize    = args(3).toInt
+    val messageSize  = args(3).toInt
+    val batchSize    = args(4).toInt
 
     // Подключаем к RabbitMQ
     // Создаём Environment
@@ -41,7 +42,7 @@ object StreamPerfTest {
       producer.send(
         producer
           .messageBuilder()
-          .addData("1".getBytes())
+          .addData(Array.fill[Byte](messageSize)(0))
           .build(),
         _ => {}
       )
@@ -49,7 +50,7 @@ object StreamPerfTest {
 
     val end = System.nanoTime
     println(
-      s"Published ${producer.getLastPublishingId - firstPublishingId} messages by batch $batchSize in ${Duration.ofNanos(end - start).toMillis} ms"
+      s"Published ${producer.getLastPublishingId - firstPublishingId} messages with size $messageSize by batch $batchSize in ${Duration.ofNanos(end - start).toMillis} ms"
     )
 
     // Закрываем и выходим
