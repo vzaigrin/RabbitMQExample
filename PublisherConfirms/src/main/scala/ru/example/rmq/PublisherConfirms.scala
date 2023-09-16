@@ -8,13 +8,16 @@ import java.util.function.BooleanSupplier
 import scala.util.Using
 
 object PublisherConfirms {
-  val MESSAGE_COUNT = 50_000
-
   def main(args: Array[String]): Unit = {
+    val host         = if (args.length > 0) args(0) else "localhost"
+    val username     = if (args.length > 1) args(1) else "guest"
+    val password     = if (args.length > 2) args(2) else "guest"
+    val messageCount = if (args.length > 3) args(3).toInt else 50_000
+
     val cf = new ConnectionFactory
-    cf.setHost("localhost")
-    cf.setUsername("guest")
-    cf.setPassword("guest")
+    cf.setHost(host)
+    cf.setUsername(username)
+    cf.setPassword(password)
     cf.newConnection
 
     Using.Manager { use =>
@@ -22,38 +25,38 @@ object PublisherConfirms {
       val ch         = use(connection.createChannel)
       ch.confirmSelect
 
-      publishMessagesIndividually(ch)
-      publishMessagesInBatch(ch)
-      handlePublishConfirmsAsynchronously(ch)
+      publishMessagesIndividually(ch, messageCount)
+      publishMessagesInBatch(ch, messageCount)
+      handlePublishConfirmsAsynchronously(ch, messageCount)
     }
     sys.exit(0)
   }
 
-  def publishMessagesIndividually(ch: Channel): Unit = {
+  def publishMessagesIndividually(ch: Channel, messageCount: Int): Unit = {
     val queue = UUID.randomUUID.toString
     ch.queueDeclare(queue, false, false, true, null)
     val start = System.nanoTime
 
-    (0 until MESSAGE_COUNT).foreach { i =>
+    (0 until messageCount).foreach { i =>
       ch.basicPublish("", queue, null, i.toString.getBytes)
       ch.waitForConfirmsOrDie(5_000)
     }
 
     val end = System.nanoTime
-    println(s"Published $MESSAGE_COUNT messages individually in ${Duration.ofNanos(end - start).toMillis} ms")
+    println(s"Published $messageCount messages individually in ${Duration.ofNanos(end - start).toMillis} ms")
   }
 
-  def publishMessagesInBatch(ch: Channel): Unit = {
+  def publishMessagesInBatch(ch: Channel, messageCount: Int): Unit = {
     val queue = UUID.randomUUID.toString
     ch.queueDeclare(queue, false, false, true, null)
 
     val batchSize = 100
-    val quotient  = math.ceil(MESSAGE_COUNT / batchSize).toInt
-    val remainder = MESSAGE_COUNT % batchSize
+    val quotient  = math.ceil(messageCount / batchSize).toInt
+    val remainder = messageCount % batchSize
     val batchList = (0 until batchSize).toList
     val start     = System.nanoTime
 
-    (0 until MESSAGE_COUNT)
+    (0 until messageCount)
       .zip((0 until quotient).toList.flatMap(_ => batchList) ::: batchList.slice(0, remainder))
       .foreach { ij =>
         ch.basicPublish("", queue, null, ij._1.toString.getBytes)
@@ -62,10 +65,10 @@ object PublisherConfirms {
     if (remainder > 0) ch.waitForConfirmsOrDie(5_000)
 
     val end = System.nanoTime
-    println(s"Published $MESSAGE_COUNT messages in batch in ${Duration.ofNanos(end - start).toMillis} ms")
+    println(s"Published $messageCount messages in batch in ${Duration.ofNanos(end - start).toMillis} ms")
   }
 
-  def handlePublishConfirmsAsynchronously(ch: Channel): Unit = {
+  def handlePublishConfirmsAsynchronously(ch: Channel, messageCount: Int): Unit = {
     val queue = UUID.randomUUID.toString
     ch.queueDeclare(queue, false, false, true, null)
     val outstandingConfirms = new ConcurrentSkipListMap[Long, String]
@@ -89,7 +92,7 @@ object PublisherConfirms {
     )
     val start = System.nanoTime
 
-    (0 until MESSAGE_COUNT).foreach { i =>
+    (0 until messageCount).foreach { i =>
       val body = String.valueOf(i)
       outstandingConfirms.put(ch.getNextPublishSeqNo, body)
       ch.basicPublish("", queue, null, body.getBytes)
@@ -100,7 +103,7 @@ object PublisherConfirms {
 
     val end = System.nanoTime
     println(
-      s"Published $MESSAGE_COUNT messages and handled confirms asynchronously in ${Duration.ofNanos(end - start).toMillis} ms"
+      s"Published $messageCount messages and handled confirms asynchronously in ${Duration.ofNanos(end - start).toMillis} ms"
     )
   }
 

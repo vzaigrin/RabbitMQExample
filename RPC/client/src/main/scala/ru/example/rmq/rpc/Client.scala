@@ -12,8 +12,9 @@ object Client {
 
   def main(args: Array[String]): Unit = {
     try {
+      val host = if (args.length > 0) args(0) else "localhost"
       factory = new ConnectionFactory
-      factory.setHost("localhost")
+      factory.setHost(host)
       connection = factory.newConnection
       channel = connection.createChannel
 

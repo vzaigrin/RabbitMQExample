@@ -4,11 +4,11 @@ ThisBuild / version := "1.0"
 ThisBuild / scalaVersion := "2.13.8"
 ThisBuild / organization := "ru.example"
 
-lazy val configVersion = "1.4.1"
-lazy val csvVersion    = "1.8"
-lazy val circeVersion  = "0.14.1"
-lazy val streamVersion = "0.4.0"
-lazy val slf4jVersion  = "1.7.32"
+lazy val configVersion = "1.4.2"
+lazy val csvVersion    = "1.10.0"
+lazy val circeVersion  = "0.14.5"
+lazy val streamVersion = "0.9.0"
+lazy val slf4jVersion  = "2.0.5"
 
 ThisBuild / libraryDependencies ++= Seq(
   "com.typesafe"       % "config"        % configVersion,

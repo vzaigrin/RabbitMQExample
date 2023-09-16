@@ -6,9 +6,9 @@ import java.nio.charset.StandardCharsets
 object Consumer {
   def main(args: Array[String]): Unit = {
     val TASK_QUEUE_NAME = "task_queue"
-
-    val factory = new ConnectionFactory
-    factory.setHost("localhost")
+    val host            = if (args.length > 0) args(0) else "localhost"
+    val factory         = new ConnectionFactory
+    factory.setHost(host)
     val connection = factory.newConnection
     val channel    = connection.createChannel
 

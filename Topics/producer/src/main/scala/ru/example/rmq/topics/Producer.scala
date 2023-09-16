@@ -6,16 +6,18 @@ import scala.util.Using
 object Producer {
   def main(args: Array[String]): Unit = {
     val EXCHANGE_NAME = "topic_logs"
+    val host          = if (args.length > 0) args(0) else "localhost"
     val factory       = new ConnectionFactory
-    factory.setHost("localhost")
+    factory.setHost(host)
 
     Using.Manager { use =>
       val connection = use(factory.newConnection)
       val channel    = use(connection.createChannel)
       channel.exchangeDeclare(EXCHANGE_NAME, "topic")
 
-      val routingKey = getRouting(args)
-      val message    = getMessage(args)
+      val strings    = args.slice(1, args.length)
+      val routingKey = getRouting(strings)
+      val message    = getMessage(strings)
 
       channel.basicPublish(EXCHANGE_NAME, routingKey, null, message.getBytes("UTF-8"))
       println(s"[x] Sent '$routingKey': '$message'")

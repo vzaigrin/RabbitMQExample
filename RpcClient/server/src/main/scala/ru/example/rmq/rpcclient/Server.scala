@@ -7,8 +7,9 @@ object Server {
     val RPC_QUEUE_NAME          = "rpc_queue"
     lazy val fib: LazyList[Int] = 0 #:: 1 #:: fib.zip(fib.tail).map { case (a, b) => a + b }
 
+    val host    = if (args.length > 0) args(0) else "localhost"
     val factory = new ConnectionFactory()
-    factory.setHost("localhost")
+    factory.setHost(host)
 
     val connection = factory.newConnection
     val channel    = connection.createChannel

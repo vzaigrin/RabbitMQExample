@@ -6,9 +6,10 @@ import scala.util.Using
 object Producer {
   def main(args: Array[String]): Unit = {
     val TASK_QUEUE_NAME = "task_queue"
-    val message         = args.mkString(" ")
+    val host            = if (args.length > 0) args(0) else "localhost"
     val factory         = new ConnectionFactory
-    factory.setHost("localhost")
+    factory.setHost(host)
+    val message = args.slice(1, args.length).mkString(" ")
 
     Using.Manager { use =>
       val connection = use(factory.newConnection)

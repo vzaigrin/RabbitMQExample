@@ -9,9 +9,9 @@
 
 ## Запуск
 
-* Терминал 1 - *java -jar consumer.jar error*
-* Терминал 2 - *java -jar consumer.jar info warning*
+* Терминал 1 - *java -jar consumer.jar <host> error*
+* Терминал 2 - *java -jar consumer.jar <host> info warning*
 * Терминал 3:
-  * *java -jar producer.jar error Message*
-  * *java -jar producer.jar info Message*
-  * *java -jar producer.jar warning Message*
+  * *java -jar producer.jar <host> error Message*
+  * *java -jar producer.jar <host> info Message*
+  * *java -jar producer.jar <host> warning Message*

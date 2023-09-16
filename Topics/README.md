@@ -9,12 +9,12 @@
 
 ## Запуск
 
-* Терминал 1 - *java -jar consumer.jar "#"*
-* Терминал 2 - *java -jar consumer.jar "kern.\*"*
-* Терминал 3 - *java -jar consumer.jar "kern.\*" "\*.critical"*
+* Терминал 1 - *java -jar consumer.jar <host> "#"*
+* Терминал 2 - *java -jar consumer.jar <host> "kern.\*"*
+* Терминал 3 - *java -jar consumer.jar <host> "kern.\*" "\*.critical"*
 * Терминал 4:
-  * *java -jar producer.jar info Message*
-  * *java -jar producer.jar kern.critical Message*
-  * *java -jar producer.jar kern Message*
-  * *java -jar producer.jar kern.info Message*
-  * *java -jar producer.jar log.critical Message*
+  * *java -jar producer.jar <host> info Message*
+  * *java -jar producer.jar <host> kern.critical Message*
+  * *java -jar producer.jar <host> kern Message*
+  * *java -jar producer.jar <host> kern.info Message*
+  * *java -jar producer.jar <host> log.critical Message*

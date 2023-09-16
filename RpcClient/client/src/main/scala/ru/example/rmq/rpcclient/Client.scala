@@ -6,8 +6,9 @@ import scala.util.Using
 object Client {
   def main(args: Array[String]): Unit = {
     val requestQueueName = "rpc_queue"
+    val host             = if (args.length > 0) args(0) else "localhost"
     val factory          = new ConnectionFactory
-    factory.setHost("localhost")
+    factory.setHost(host)
 
     Using.Manager { use =>
       val connection = use(factory.newConnection)

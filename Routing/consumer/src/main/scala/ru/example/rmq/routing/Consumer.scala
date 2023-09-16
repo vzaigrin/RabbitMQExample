@@ -7,19 +7,22 @@ object Consumer {
     val EXCHANGE_NAME = "direct_logs"
 
     if (args.length < 1) {
-      println("Usage: Consumer [info] [warning] [error]")
+      println("Usage: Consumer host [info] [warning] [error]")
       sys.exit(-1)
     }
 
+    val host    = args(0)
     val factory = new ConnectionFactory
-    factory.setHost("localhost")
+    factory.setHost(host)
     val connection = factory.newConnection
     val channel    = connection.createChannel
 
     channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.DIRECT)
     val queueName = channel.queueDeclare().getQueue
 
-    args.foreach { severity => channel.queueBind(queueName, EXCHANGE_NAME, severity) }
+    args.slice(1, args.length).foreach { severity =>
+      channel.queueBind(queueName, EXCHANGE_NAME, severity)
+    }
 
     println("[*] Waiting for messages. To exit press CTRL+C")
     channel.basicConsume(
