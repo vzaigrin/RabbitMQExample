@@ -5,9 +5,10 @@ import com.rabbitmq.client._
 object Consumer {
   def main(args: Array[String]): Unit = {
     val EXCHANGE_NAME = "logs"
+    val host          = if (args.length == 1) args(0) else "localhost"
 
     val factory = new ConnectionFactory
-    factory.setHost("localhost")
+    factory.setHost(host)
     val connection = factory.newConnection
     val channel    = connection.createChannel
 
