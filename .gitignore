@@ -1,5 +1,7 @@
+.gitignore
 *.class
 *.log
+**/.DS_Store
 **/.history3
 **/.bsp/
 **/.idea
