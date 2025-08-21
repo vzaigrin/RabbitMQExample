@@ -4,8 +4,8 @@ ThisBuild / version := "1.0"
 ThisBuild / scalaVersion := "2.13.8"
 ThisBuild / organization := "ru.example"
 
-lazy val streamVersion = "0.9.0"
-lazy val slf4jVersion  = "2.0.5"
+lazy val streamVersion = "1.2.0"
+lazy val slf4jVersion  = "2.0.17"
 
 ThisBuild / libraryDependencies ++= Seq(
   "com.rabbitmq" % "stream-client" % streamVersion,
