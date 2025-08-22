@@ -5,6 +5,9 @@
 **/.history3
 **/.bsp/
 **/.idea
+**/.metals
+**/.scala-build
+**/.vscode
 **/target/scala-2.13/classes/
 **/target/scala-2.13/update/
 **/target/scala-2.13/zinc/

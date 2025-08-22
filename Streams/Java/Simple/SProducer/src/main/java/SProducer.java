@@ -2,8 +2,8 @@ import com.rabbitmq.stream.Environment;
 import com.rabbitmq.stream.Message;
 import com.rabbitmq.stream.Producer;
 import java.time.Duration;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.IntStream;
 
 public class SProducer {
@@ -20,51 +20,57 @@ public class SProducer {
         if (args.length > 3) messageSize = Integer.parseInt(args[3]);
         if (args.length > 4) batchSize = Integer.parseInt(args[4]);
 
-        try {
-            // Подключаем к RabbitMQ
-            // Создаём Environment
-            Environment environment = Environment.builder().uri(uri).build();
+        AtomicLong messageConfirmed   = new AtomicLong(0);
+        AtomicLong messageUnconfirmed = new AtomicLong(0);
 
+        byte[] value = new byte[messageSize];
+
+        try (Environment environment = Environment.builder().uri(uri).build()) {
             // Создаём Stream
             environment.streamCreator().stream(stream).create();
 
             // Создаём Producer
             Producer producer = environment
                     .producerBuilder()
-                    .name("PerfTest")
                     .stream(stream)
+                    .name("PerfTestProducer")
                     .batchSize(batchSize)
-                    .build();
-
-            byte[] value = new byte[messageSize];
-            Message message = producer.messageBuilder()
-                    .addData(value)
+                    .batchPublishingDelay(Duration.ZERO)
+                    .maxUnconfirmedMessages(batchSize)
                     .build();
 
             // Отправляем в RabbitMQ
             long start = System.nanoTime();
 
-            CountDownLatch confirmLatch = new CountDownLatch(messageCount);
             IntStream.range(0, messageCount).forEach(i -> {
-                // send one message
-                producer.send(message, confirmationStatus -> confirmLatch.countDown());
-            });
-            confirmLatch.await(1, TimeUnit.MINUTES);
+                Message message = producer
+                        .messageBuilder()
+                        .properties()
+                        .messageId(UUID.randomUUID())
+                        .messageBuilder()
+                        .addData(value)
+                        .build();
+
+                producer.send(message,
+                        confirmationStatus -> {
+                        if (confirmationStatus.isConfirmed()) messageConfirmed.incrementAndGet();
+                        else messageUnconfirmed.incrementAndGet();
+                    });
+                }
+            );
 
             long end = System.nanoTime();
             long duration = Duration.ofNanos(end - start).toMillis();
 
             // Выводим результат
-            System.out.printf("Published %d messages with size %d by batch %d in %d ms", messageCount, messageSize, batchSize, duration);
-            producer.wait();
+            System.out.printf("Published %d messages with size %d by batch %d in %d ms\n", messageCount, messageSize, batchSize, duration);
+            System.out.printf("Confirmed %d, Unconfirmed %d\n", messageConfirmed.get(), messageUnconfirmed.get());
 
             // Закрываем и выходим
             producer.close();
-            environment.close();
-            System.exit(0);
-
-        } catch (InterruptedException | IllegalMonitorStateException e) {
+        } catch (IllegalMonitorStateException e) {
             System.exit(-1);
         }
+        System.exit(0);
     }
 }

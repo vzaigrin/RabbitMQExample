@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class SConsumer {
     private static String uri = "rabbitmq-stream://user:password@rmq1:5552";
     private static String stream = "test";
-    private static int messageCount = 10000;
+    private static int messageCount = 20000;
 
     public static void main(String[] args) {
         if (args.length > 0) uri = args[0];
@@ -39,7 +39,6 @@ public class SConsumer {
             System.out.printf("Consumed %d offsets", messageConsumed.get());
             consumer.close();
             System.exit(0);
-
         } catch (InterruptedException | IllegalMonitorStateException e) {
             System.exit(-1);
         }
