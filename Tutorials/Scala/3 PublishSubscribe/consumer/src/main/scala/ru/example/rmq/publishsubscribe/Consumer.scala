@@ -6,14 +6,20 @@ import java.nio.charset.StandardCharsets
 object Consumer {
   def main(args: Array[String]): Unit = {
     val EXCHANGE_NAME = "logs"
-    val host          = if (args.length == 1) args(0) else "localhost"
-    val user          = "user"
-    val password      = "password"
     val virtualHost   = "/"
 
+    if (args.length < 3) {
+      System.out.println("Usage: Consumer hostname username password")
+      System.exit(-1)
+    }
+
+    val hostname = args(0)
+    val username = args(1)
+    val password = args(2)
+
     val factory = new ConnectionFactory
-    factory.setHost(host)
-    factory.setUsername(user)
+    factory.setHost(hostname)
+    factory.setUsername(username)
     factory.setPassword(password)
     factory.setVirtualHost(virtualHost)
 

@@ -9,9 +9,9 @@
 
 ## Запуск
 
-* Терминал 1 - java -jar jars/consumer.jar rmq1 error
-* Терминал 2 - java -jar jars/consumer.jar rmq1 info warning
+* Терминал 1 - java -jar jars/consumer.jar rmq1 username password error
+* Терминал 2 - java -jar jars/consumer.jar rmq1 username password info warning
 * Терминал 3:
-  * java -jar jars/producer.jar rmq1 error Message
-  * java -jar jars/producer.jar rmq1 info Message
-  * java -jar jars/producer.jar rmq1 warning Message
+  * java -jar jars/producer.jar rmq1 username password error Message
+  * java -jar jars/producer.jar rmq1 username password info Message
+  * java -jar jars/producer.jar rmq1 username password warning Message

@@ -5,20 +5,20 @@ import java.nio.charset.StandardCharsets
 
 object Consumer {
   def main(args: Array[String]): Unit = {
-    if (args.length < 1) {
-      println("Usage: Consumer host [info] [warning] [error]")
-      sys.exit(-1)
+    if (args.length < 4) {
+      println("Usage: Consumer hostname username password severity [severity...]");
+      sys.exit(1);
     }
 
     val EXCHANGE_NAME = "direct_logs"
-    val host          = args(0)
-    val user          = "user"
-    val password      = "password"
+    val hostname      = args(0)
+    val username      = args(1)
+    val password      = args(2)
     val virtualHost   = "/"
 
     val factory = new ConnectionFactory
-    factory.setHost(host)
-    factory.setUsername(user)
+    factory.setHost(hostname)
+    factory.setUsername(username)
     factory.setPassword(password)
     factory.setVirtualHost(virtualHost)
 
@@ -29,7 +29,7 @@ object Consumer {
       channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.DIRECT)
       val queueName = channel.queueDeclare().getQueue
 
-      args.slice(1, args.length).foreach { severity =>
+      args.slice(3, args.length).foreach { severity =>
         channel.queueBind(queueName, EXCHANGE_NAME, severity)
       }
 

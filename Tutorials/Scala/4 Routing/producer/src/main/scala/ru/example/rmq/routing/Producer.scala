@@ -7,18 +7,23 @@ import scala.util.Using
 object Producer {
   def main(args: Array[String]): Unit = {
     val EXCHANGE_NAME = "direct_logs"
-    val host          = if (args.length > 0) args(0) else "localhost"
-    val user          = "user"
-    val password      = "password"
     val virtualHost   = "/"
 
-    val strings  = args.slice(1, args.length)
-    val severity = getSeverity(strings)
-    val message  = getMessage(strings)
+    if (args.length < 3) {
+      System.out.println("Usage: Consumer hostname username password [severity] [message...]")
+      System.exit(-1)
+    }
+
+    val hostname = args(0)
+    val username = args(1)
+    val password = args(2)
+
+    val severity = if (args.length > 3) args(3) else "info"
+    val message  = if (args.length > 4) args.slice(4, args.length).mkString(" ") else "Hello World!"
 
     val factory = new ConnectionFactory
-    factory.setHost(host)
-    factory.setUsername(user)
+    factory.setHost(hostname)
+    factory.setUsername(username)
     factory.setPassword(password)
     factory.setVirtualHost(virtualHost)
 
@@ -28,7 +33,12 @@ object Producer {
         val channel    = use(connection.createChannel)
 
         channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.DIRECT)
-        channel.basicPublish(EXCHANGE_NAME, severity, null, message.getBytes(StandardCharsets.UTF_8))
+        channel.basicPublish(
+          EXCHANGE_NAME,
+          severity,
+          null,
+          message.getBytes(StandardCharsets.UTF_8)
+        )
         println(s"[x] Sent '$severity': '$message'")
       } catch {
         case e: Exception =>
@@ -37,24 +47,5 @@ object Producer {
       }
     }
     sys.exit(0)
-  }
-
-  private def getSeverity(strings: Array[String]): String = {
-    if (strings.length < 1) "info"
-    else strings(0)
-  }
-
-  private def getMessage(strings: Array[String]): String = {
-    if (strings.length < 2) "Hello World!"
-    else joinStrings(strings)
-  }
-
-  private def joinStrings(strings: Array[String]): String = {
-    val delimiter  = " "
-    val startIndex = 1
-    val length     = strings.length
-
-    if (length == 0 || length <= startIndex) ""
-    else strings.splitAt(1)._2.mkString(delimiter)
   }
 }

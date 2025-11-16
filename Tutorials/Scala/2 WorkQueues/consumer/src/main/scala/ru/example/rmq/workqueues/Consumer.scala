@@ -6,17 +6,17 @@ import java.nio.charset.StandardCharsets
 object Consumer {
   def main(args: Array[String]): Unit = {
     val TASK_QUEUE_NAME = "task_queue"
-    val host            = if (args.length > 0) args(0) else "localhost"
-    val user            = "user"
-    val password        = "password"
+    val hostname        = if (args.length > 0) args(0) else "localhost"
+    val username        = if (args.length > 1) args(0) else "user"
+    val password        = if (args.length > 2) args(0) else "password"
     val virtualHost     = "/"
 
     val arguments = new java.util.HashMap[String, Object]()
     arguments.put("x-message-ttl", 3600000.asInstanceOf[Object])
 
     val factory = new ConnectionFactory
-    factory.setHost(host)
-    factory.setUsername(user)
+    factory.setHost(hostname)
+    factory.setUsername(username)
     factory.setPassword(password)
     factory.setVirtualHost(virtualHost)
 

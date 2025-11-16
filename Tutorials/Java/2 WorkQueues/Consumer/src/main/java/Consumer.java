@@ -7,23 +7,28 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Consumer {
-    private final static String TASK_QUEUE_NAME = "task_queue";
-    private final static String user = "user";
-    private final static String password = "password";
-    private final static String virtualHost = "/";
-
     public static void main(String[] argv) throws Exception {
-        String host;
-
-        if (argv.length > 0) host = argv[0];
-        else host = "localhost";
+        String hostname;
+        String username;
+        String password;
+        String TASK_QUEUE_NAME = "task_queue";
+        String virtualHost = "/";
 
         Map<String, Object> arguments = new HashMap<>();
         arguments.put("x-message-ttl", 3600000);
 
+        if (argv.length < 3) {
+            System.out.println("Usage: Consumer hostname username password");
+            System.exit(-1);
+        }
+
+        hostname = argv[0];
+        username = argv[1];
+        password = argv[2];
+
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost(host);
-        factory.setUsername(user);
+        factory.setHost(hostname);
+        factory.setUsername(username);
         factory.setPassword(password);
         factory.setVirtualHost(virtualHost);
 
@@ -36,7 +41,6 @@ public class Consumer {
 
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
-
             System.out.print(" [x] Received '" + message + "'");
             try {
                 doWork(message);
@@ -46,7 +50,6 @@ public class Consumer {
             }
         };
         channel.basicConsume(TASK_QUEUE_NAME, false, deliverCallback, consumerTag -> { });
-
     }
 
     private static void doWork(String task) {

@@ -6,7 +6,7 @@
 * **client** отсылает 32 запроса на вычисление чисел Фибоначчи (от 0 до 31), получает результат и печатает его
 
 Пример использования:
-* java -jar jars/server.jar rmq1
-* java -jar jars/client.jar rmq1
+* java -jar jars/server.jar rmq1 user password
+* java -jar jars/client.jar rmq1 user password
 
 При одновременном запуске нескольких *server* запросы распределяются между ними циклически.

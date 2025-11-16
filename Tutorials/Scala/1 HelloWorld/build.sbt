@@ -5,7 +5,7 @@ ThisBuild / scalaVersion := "2.13.8"
 ThisBuild / organization := "ru.example"
 
 ThisBuild / libraryDependencies ++= Seq(
-  "com.rabbitmq" % "amqp-client"  % "5.26.0",
+  "com.rabbitmq" % "amqp-client"  % "5.27.1",
   "org.slf4j"    % "slf4j-api"    % "2.0.17",
   "org.slf4j"    % "slf4j-simple" % "2.0.17"
 )

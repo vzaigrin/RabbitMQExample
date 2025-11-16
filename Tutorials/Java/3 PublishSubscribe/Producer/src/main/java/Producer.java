@@ -6,24 +6,29 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 public class Producer {
-    private final static String EXCHANGE_NAME   = "logs";
-    private final static String user            = "user";
-    private final static String password        = "password";
-    private final static String virtualHost     = "/";
-
     public static void main(String[] argv) throws Exception {
-        String host;
+        String hostname;
+        String username;
+        String password;
+        String virtualHost = "/";
+        String EXCHANGE_NAME   = "logs";
         String message;
 
-        if (argv.length > 0) host = argv[0];
-        else host = "localhost";
+        if (argv.length < 3) {
+            System.out.println("Usage: Producer hostname username password [message]");
+            System.exit(-1);
+        }
 
-        if (argv.length < 2) message = "info: Hello World!";
-        else message = String.join(" ", Arrays.copyOfRange(argv, 1, argv.length));
+        hostname = argv[0];
+        username = argv[1];
+        password = argv[2];
+
+        if (argv.length > 3) message = String.join(" ", Arrays.copyOfRange(argv, 1, argv.length));
+        else message = "info: Hello World!";
 
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost(host);
-        factory.setUsername(user);
+        factory.setHost(hostname);
+        factory.setUsername(username);
         factory.setPassword(password);
         factory.setVirtualHost(virtualHost);
 

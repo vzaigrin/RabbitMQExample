@@ -11,18 +11,25 @@ public class RPCClient implements AutoCloseable {
     private static Connection connection;
     private static Channel channel;
     private final static String requestQueueName = "rpc_queue";
-    private final static String user = "user";
-    private final static String password = "password";
-    private final static String virtualHost = "/";
 
     public static void main(String[] argv) throws Exception {
-        String host;
-        if (argv.length > 0) host = argv[0];
-        else host = "localhost";
+        String hostname;
+        String username;
+        String password;
+        String virtualHost = "/";
+
+        if (argv.length < 3) {
+            System.out.println("Usage: RPCClient hostname username password");
+            System.exit(-1);
+        }
+
+        hostname = argv[0];
+        username = argv[1];
+        password = argv[2];
 
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost(host);
-        factory.setUsername(user);
+        factory.setHost(hostname);
+        factory.setUsername(username);
         factory.setPassword(password);
         factory.setVirtualHost(virtualHost);
 
@@ -30,7 +37,7 @@ public class RPCClient implements AutoCloseable {
         channel = connection.createChannel();
 
         try (RPCClient fibonacciRpc = new RPCClient()) {
-            for (int i = 0; i < 32; i++) {
+            for (int i = 0; i < 31; i++) {
                 String i_str = Integer.toString(i);
                 System.out.print(" [x] Requesting fib(" + i_str + ") ..");
                 String response = fibonacciRpc.call(i_str);

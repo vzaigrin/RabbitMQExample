@@ -10,8 +10,8 @@ import java.util.function.BooleanSupplier;
 
 public class PublisherConfirms {
     private static String host = "localhost";
-    private static String user = "guest";
-    private static String password = "guest";
+    private static String user = "user";
+    private static String password = "password";
     private static final String virtualHost = "/";
     private static int messageCount = 50_000;
 

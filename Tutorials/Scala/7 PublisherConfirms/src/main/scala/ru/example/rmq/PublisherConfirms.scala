@@ -12,8 +12,8 @@ object PublisherConfirms {
 
   def main(args: Array[String]): Unit = {
     val host         = if (args.length > 0) args(0) else "localhost"
-    val user         = if (args.length > 1) args(1) else "guest"
-    val password     = if (args.length > 2) args(2) else "guest"
+    val user         = if (args.length > 1) args(1) else "username"
+    val password     = if (args.length > 2) args(2) else "username"
     val messageCount = if (args.length > 3) args(3).toInt else 50_000
     val virtualHost  = "/"
 

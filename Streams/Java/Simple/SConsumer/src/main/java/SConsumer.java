@@ -29,13 +29,12 @@ public class SConsumer {
                     .messageHandler(
                             (ctx, msg) -> {
                                 messageConsumed.incrementAndGet();
-//                                System.out.printf("Offset = %d\t Message = %s\n", ctx.offset(), msg.getBody().toString());
                                 confirmLatch.countDown();
                             }
                     )
                     .build();
 
-            confirmLatch.await(1, TimeUnit.MINUTES);
+            confirmLatch.await(5, TimeUnit.MINUTES);
             System.out.printf("Consumed %d offsets", messageConsumed.get());
             consumer.close();
             System.exit(0);

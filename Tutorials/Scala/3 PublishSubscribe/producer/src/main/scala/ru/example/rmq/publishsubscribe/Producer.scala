@@ -7,18 +7,24 @@ import scala.util.Using
 object Producer {
   def main(args: Array[String]): Unit = {
     val EXCHANGE_NAME = "logs"
-    val host          = if (args.length > 0) args(0) else "localhost"
-    val user          = "user"
-    val password      = "password"
-    val virtualHost   = "/"
+
+    if (args.length < 3) {
+      System.out.println("Usage: Producer hostname username password [message]")
+      System.exit(-1)
+    }
+
+    val hostname    = args(0)
+    val username    = args(1)
+    val password    = args(2)
+    val virtualHost = "/"
 
     val message =
-      if (args.length < 2) "info: Hello World!"
-      else args.slice(1, args.length).mkString(" ")
+      if (args.length > 3) args.slice(4, args.length).mkString(" ")
+      else "info: Hello World!"
 
     val factory = new ConnectionFactory
-    factory.setHost(host)
-    factory.setUsername(user)
+    factory.setHost(hostname)
+    factory.setUsername(username)
     factory.setPassword(password)
     factory.setVirtualHost(virtualHost)
 

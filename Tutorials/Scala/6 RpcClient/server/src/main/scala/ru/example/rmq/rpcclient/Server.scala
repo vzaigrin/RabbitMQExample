@@ -5,17 +5,17 @@ import java.nio.charset.StandardCharsets
 
 object Server {
   def main(args: Array[String]): Unit = {
-    val RPC_QUEUE_NAME          = "rpc_queue"
-    val host    = if (args.length > 0) args(0) else "localhost"
-    val user           = "user"
-    val password       = "password"
+    val RPC_QUEUE_NAME = "rpc_queue"
+    val hostname       = if (args.length > 0) args(0) else "localhost"
+    val username       = if (args.length > 1) args(1) else "username"
+    val password       = if (args.length > 2) args(2) else "password"
     val virtualHost    = "/"
 
     lazy val fib: LazyList[Int] = 0 #:: 1 #:: fib.zip(fib.tail).map { case (a, b) => a + b }
 
     val factory = new ConnectionFactory()
-    factory.setHost(host)
-    factory.setUsername(user)
+    factory.setHost(hostname)
+    factory.setUsername(username)
     factory.setPassword(password)
     factory.setVirtualHost(virtualHost)
 
